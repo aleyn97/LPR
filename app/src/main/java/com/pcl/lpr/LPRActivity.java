@@ -180,12 +180,26 @@ public class LPRActivity extends AppCompatActivity implements SurfaceHolder.Call
                 matrix.postRotate(90);
                 //mBmp = Bitmap.createBitmap(bmp, viewFinderView.center.top + actionHeight, viewFinderView.center.left,viewFinderView.centerHeight, viewFinderView.centerWidth, matrix, true);
                 stream.close();
-                Bitmap bitmap = Bitmap.createBitmap(bmp, viewFinderView.center.top, viewFinderView.center.left,
-                        viewFinderView.centerHeight, viewFinderView.centerWidth, matrix, true);
 
+                /*****处理拍照出来的图片 尺寸和手机屏幕分辨率不一致导致的Bitmap 剪切失败 *****/
+                int screenHeight = getResources().getDisplayMetrics().heightPixels;
+                int screenWidth = getResources().getDisplayMetrics().widthPixels;
 
-                int width = bitmap.getWidth();
-                int height = bitmap.getHeight();
+                float ratew = size.width * 1f / screenHeight;
+                float rateh = size.height * 1f / screenWidth;
+                float rate = Math.min(rateh, ratew);
+                int width = (int)(viewFinderView.centerWidth * rate);
+                int height = (int)(viewFinderView.centerHeight * rate);
+                int left = (int)(viewFinderView.center.left * rate);
+                int top = (int)(viewFinderView.center.top * rate);
+
+                Bitmap bitmap = Bitmap.createBitmap(bmp, top,left,
+                        height,width, matrix, true);
+
+                /*****处理拍照出来的图片 尺寸和手机屏幕分辨率不一致导致的Bitmap 剪切失败 end *****/
+
+                width = bitmap.getWidth();
+                height = bitmap.getHeight();
                 Mat m = new Mat(width, height, CvType.CV_8UC4);
 //                    Mat m = new Mat(width, height, CvType.CV_8UC2);
                 Utils.bitmapToMat(bitmap, m);
