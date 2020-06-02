@@ -5,7 +5,10 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -16,14 +19,17 @@ import static com.pcl.ocr.ui.LPRActivity.REQUEST_LPR_CODE;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final int PERMISSION_CODE = 100;
+
+    private final String[] PERMISSION_LPR = new String[]{Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        requestDangerousPermissions();
         findViewById(R.id.brn_lpr).setOnClickListener(v -> {
-            startActivityForResult(new Intent(this, LPRActivity.class), REQUEST_LPR_CODE);
-//            startActivity(new Intent(this, TestActivity.class));
+            ActivityCompat.requestPermissions(this, PERMISSION_LPR, PERMISSION_CODE);
         });
     }
 
@@ -44,15 +50,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * 请求权限
-     */
-    public void requestDangerousPermissions() {
-        String[] strings = new String[]{Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        ActivityCompat.requestPermissions(this, strings, 100);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        for (int i = 0; i < grantResults.length; i++) {
+            if (grantResults[i] < 0) {
+                String alent = "";
+                if (i == 0) alent = "相机";
+                if (i == 1) alent = "读写";
+                Toast.makeText(this, alent + "权限被拒绝，请到设置中开启", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        if (requestCode == PERMISSION_CODE) {
+            startActivityForResult(new Intent(this, LPRActivity.class), REQUEST_LPR_CODE);
+        }
     }
+
 }

@@ -70,7 +70,7 @@ public class CameraAnalyzer implements ImageAnalysis.Analyzer {
             Log.d(TAG, "previewHandler is null");
         }
         try {
-            Thread.sleep(500);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
             image.close();
