@@ -106,7 +106,7 @@ public class ScannerView extends RelativeLayout {
                 camera = cameraProvider.bindToLifecycle((LifecycleOwner) getContext(), CameraSelector.DEFAULT_BACK_CAMERA, preview, imageAnalyzer);
 
                 // 开始预览
-                preview.setSurfaceProvider(mPreviewView.createSurfaceProvider(camera.getCameraInfo()));
+                preview.setSurfaceProvider(mPreviewView.createSurfaceProvider());
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
